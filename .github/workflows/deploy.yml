@@ -20,11 +20,9 @@ jobs:
           node-version: '18'
 
       - name: Install dependencies
-        working-directory: frontend
         run: npm install
 
       - name: Build project
-        working-directory: frontend
         run: npm run build
 
       - name: Start SSH agent and add key
@@ -40,4 +38,4 @@ jobs:
           REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
         run: |
           ssh-keyscan -H 148.113.194.130 >> ~/.ssh/known_hosts
-          rsync -avz --delete frontend/build/ alxmu6848@148.113.194.130:/home/alxmultimedia.com/public_html/build
+          rsync -avz --delete build/ alxmu6848@148.113.194.130:/home/alxmultimedia.com/public_html/build
