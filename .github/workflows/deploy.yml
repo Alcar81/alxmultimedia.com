@@ -36,7 +36,7 @@ jobs:
 
       - name: Copy build to server
         run: |
-          ssh-keyscan -H 148.113.194.130 > known_hosts
+          touch known_hosts
+          chmod 600 known_hosts
+          ssh-keyscan -p 49645 -H 148.113.194.130 >> known_hosts
           rsync -avz --delete build/ root@148.113.194.130:/home/alxmultimedia.com/public_html/build -e "ssh -p 49645 -o UserKnownHostsFile=known_hosts"
-
-
