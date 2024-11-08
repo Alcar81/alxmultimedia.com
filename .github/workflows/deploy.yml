@@ -1,0 +1,40 @@
+name: Deploy Frontend
+
+on:
+  push:
+    branches:
+      - master # Déclenche le workflow à chaque fois qu'il y a un push sur la branche "master"
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Change to frontend directory
+        run: cd frontend
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build project
+        working-directory: frontend
+        run: npm run build
+
+      - name: Copy build to server
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          mkdir -p ~/.ssh
+          echo "$SSH_PRIVATE_KEY" > ~/.ssh/git_id_rsa
+          chmod 600 ~/.ssh/git_id_rsa
+          ssh-keyscan -H 148.113.194.130 >> ~/.ssh/known_hosts
+          rsync -avz --delete frontend/build/ alxmu6848@148.113.194.130:/home/alxmultimedia.com/public_html/build
