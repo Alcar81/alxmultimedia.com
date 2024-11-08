@@ -28,14 +28,18 @@ jobs:
       - name: Start SSH agent and add key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
         run: |
           eval $(ssh-agent -s)
           echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+          expect << EOF
+          spawn ssh-add
+          expect "Enter passphrase"
+          send "$SSH_PASSPHRASE\n"
+          expect eof
+          EOF
 
       - name: Copy build to server
-        env:
-          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
-          REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
         run: |
           ssh-keyscan -H 148.113.194.130 >> ~/.ssh/known_hosts
           rsync -avz --delete build/ alxmu6848@148.113.194.130:/home/alxmultimedia.com/public_html/build
