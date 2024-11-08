@@ -25,19 +25,16 @@ jobs:
       - name: Build project
         run: npm run build
 
+      - name: Install sshpass
+        run: sudo apt-get update && sudo apt-get install -y sshpass
+
       - name: Start SSH agent and add key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_PASSPHRASE: ${{ secrets.SSH_PASSPHRASE }}
         run: |
           eval $(ssh-agent -s)
-          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-          expect << EOF
-          spawn ssh-add
-          expect "Enter passphrase"
-          send "$SSH_PASSPHRASE\n"
-          expect eof
-          EOF
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add - <<< "$SSH_PASSPHRASE"
 
       - name: Copy build to server
         run: |
