@@ -35,11 +35,11 @@ jobs:
           ssh-add /tmp/git_id_rsa
 
       - name: Copy build to server
-  run: |
-    mkdir -p /tmp/.ssh
-    chmod 700 /tmp/.ssh
-    ssh-keyscan -H 148.113.194.130 >> /tmp/.ssh/known_hosts
-    rsync -avz --delete build/ root@148.113.194.130:/home/alxmultimedia.com/public_html/build -e "ssh -p 49645 -o UserKnownHostsFile=/tmp/.ssh/known_hosts"
+        run: |
+          mkdir -p /tmp/.ssh
+          chmod 700 /tmp/.ssh
+          ssh-keyscan -H 148.113.194.130 >> /tmp/.ssh/known_hosts
+          rsync -avz --delete build/ root@148.113.194.130:/home/alxmultimedia.com/public_html/build -e "ssh -p 49645 -o UserKnownHostsFile=/tmp/.ssh/known_hosts"
 
 
 
