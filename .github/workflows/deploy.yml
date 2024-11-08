@@ -19,9 +19,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Change to frontend directory
-        run: cd frontend
-
       - name: Install dependencies
         working-directory: frontend
         run: npm install
@@ -30,12 +27,17 @@ jobs:
         working-directory: frontend
         run: npm run build
 
-      - name: Copy build to server
+      - name: Start SSH agent and add key
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          mkdir -p ~/.ssh
-          echo "$SSH_PRIVATE_KEY" > ~/.ssh/git_id_rsa
-          chmod 600 ~/.ssh/git_id_rsa
+          eval $(ssh-agent -s)
+          echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+
+      - name: Copy build to server
+        env:
+          REACT_APP_API_URL: ${{ secrets.REACT_APP_API_URL }}
+          REACT_APP_CLIENT_ID: ${{ secrets.REACT_APP_CLIENT_ID }}
+        run: |
           ssh-keyscan -H 148.113.194.130 >> ~/.ssh/known_hosts
           rsync -avz --delete frontend/build/ alxmu6848@148.113.194.130:/home/alxmultimedia.com/public_html/build
