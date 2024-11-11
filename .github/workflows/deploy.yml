@@ -38,7 +38,7 @@ jobs:
           echo -e "$SSH_PRIVATE_KEY" > /tmp/git_id_rsa
           chmod 600 /tmp/git_id_rsa
           ssh-add /tmp/git_id_rsa || ssh-add -t 60 /tmp/git_id_rsa
-            # Étape 6 : Copier le build sur le serveur
+      
       
       # Étape 6 : Copier le build sur le serveur 
       - name: Copy build to server
@@ -63,3 +63,15 @@ jobs:
 
 
       
+      # Étape 7 : Redémarrer le conteneur Docker du frontend sur le serveur dev
+      - name: Restart Frontend Container
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new root@$SERVER_IP "
+          docker stop front_dev || true &&
+          docker rm front_dev || true &&
+          docker run -d --name front_dev -p 3001:80 -v $DEPLOY_DIRECTORY:/usr/share/nginx/html nginx:alpine
+          "
