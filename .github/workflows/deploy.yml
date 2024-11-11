@@ -1,10 +1,10 @@
-# /home/alxmultimedia.com/frontend/deploy.yml
-name: Deploy Frontend
+# /home/dev.alxmultimedia.com/frontend/deploy.yml
+name: Deploy Frontend Dev
 
 on:
   push:
     branches:
-      - master
+      - dev
 
 jobs:
   build-and-deploy:
@@ -32,7 +32,7 @@ jobs:
       # Étape 5 : Ajout de la clé SSH pour se connecter au serveur
       - name: Start SSH agent and add key
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
         run: |
           eval $(ssh-agent -s)
           echo "$SSH_PRIVATE_KEY" > /tmp/git_id_rsa
@@ -42,10 +42,10 @@ jobs:
       # Étape 6 : Copier le build sur le serveur
       - name: Copy build to server
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-          SERVER_IP: ${{ secrets.SERVER_IP }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          SERVER_IP: ${{ secrets.SERVER_IP_DEV }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
-          DEPLOY_DIRECTORY: ${{ secrets.DEPLOY_DIRECTORY }}
+          DEPLOY_DIRECTORY: ${{ secrets.DEPLOY_DIRECTORY_DEV }}
         run: |
           touch known_hosts
           chmod 600 known_hosts
@@ -57,3 +57,16 @@ jobs:
 
           # Effectuer la copie vers le serveur
           rsync -avz --delete build/ root@$SERVER_IP:$DEPLOY_DIRECTORY -e "ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new"
+
+      # Étape 7 : Redémarrer le conteneur Docker du frontend sur le serveur dev
+      - name: Restart Frontend Container
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          SERVER_IP: ${{ secrets.SERVER_IP_DEV }}
+          SSH_PORT: ${{ secrets.SSH_PORT }}
+        run: |
+          ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new root@$SERVER_IP "
+          docker stop front_node_dev || true &&
+          docker rm front_node_dev || true &&
+          docker run -d --name front_node_dev -p 3001:80 -v $DEPLOY_DIRECTORY:/usr/share/nginx/html nginx:alpine
+          "
