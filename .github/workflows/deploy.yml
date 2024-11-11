@@ -66,8 +66,8 @@ jobs:
       # Étape 7 : Redémarrer le conteneur Docker du frontend sur le serveur dev
       - name: Restart Frontend Container
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
-          SERVER_IP: ${{ secrets.SERVER_IP_DEV }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
         run: |
           ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new root@$SERVER_IP "
