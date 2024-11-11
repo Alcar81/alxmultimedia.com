@@ -32,12 +32,13 @@ jobs:
       # Étape 5 : Ajout de la clé SSH pour se connecter au serveur
       - name: Start SSH agent and add key
         env:
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY_DEV }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           eval $(ssh-agent -s)
           echo -e "$SSH_PRIVATE_KEY" > /tmp/git_id_rsa
           chmod 600 /tmp/git_id_rsa
-          ssh-add /tmp/git_id_rsa
+          ssh-add /tmp/git_id_rsa || ssh-add -t 60 /tmp/git_id_rsa
+
 
       # Étape 6 : Copier le build sur le serveur
       - name: Copy build to server
