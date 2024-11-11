@@ -69,6 +69,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
+          DEPLOY_DIRECTORY_DEV: ${{ secrets.DEPLOY_DIRECTORY_DEV }}
         run: |
           ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new root@$SERVER_IP "
           if [ -z \"$DEPLOY_DIRECTORY\" ]; then
@@ -76,5 +77,5 @@ jobs:
           fi &&
           docker stop front_dev || true &&
           docker rm front_dev || true &&
-          docker run -d --name front_dev -p 3001:80 -v $DEPLOY_DIRECTORY:/usr/share/nginx/html nginx:alpine
+          docker run -d --name front_dev -p 3001:80 -v $DEPLOY_DIRECTORY_DEV:/usr/share/nginx/html nginx:alpine
           "
