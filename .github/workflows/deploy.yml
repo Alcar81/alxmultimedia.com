@@ -40,7 +40,7 @@ jobs:
           ssh-add /tmp/git_id_rsa || ssh-add -t 60 /tmp/git_id_rsa
             # Étape 6 : Copier le build sur le serveur
       
-      # Étape 6 : Copier le build sur le serveur
+      # Étape 6 : Copier le build sur le serveur 
       - name: Copy build to server
         env:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
