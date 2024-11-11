@@ -46,7 +46,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SERVER_IP: ${{ secrets.SERVER_IP }}
           SSH_PORT: ${{ secrets.SSH_PORT }}
-          DEPLOY_DIRECTORY: ${{ secrets.DEPLOY_DIRECTORY }}
+          DEPLOY_DIRECTORY_DEV: ${{ secrets.DEPLOY_DIRECTORY_DEV }}
         run: |
           touch known_hosts
           chmod 600 known_hosts
@@ -59,7 +59,7 @@ jobs:
           chmod 600 /tmp/git_id_rsa_new
 
           # Effectuer la copie vers le serveur
-          rsync -avz --delete build/ root@${SERVER_IP}:${DEPLOY_DIRECTORY} -e "ssh -p ${SSH_PORT} -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new"
+          rsync -avz --delete build/ root@${SERVER_IP}:${DEPLOY_DIRECTORY_DEV} -e "ssh -p ${SSH_PORT} -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new"
 
 
       
