@@ -72,10 +72,8 @@ jobs:
           DEPLOY_DIRECTORY_DEV: ${{ secrets.DEPLOY_DIRECTORY_DEV }}
         run: |
           ssh -p $SSH_PORT -o UserKnownHostsFile=known_hosts -o IdentitiesOnly=yes -i /tmp/git_id_rsa_new root@$SERVER_IP "
-          if [ -z \"$DEPLOY_DIRECTORY\" ]; then
-            echo 'DEPLOY_DIRECTORY is not set' && exit 1;
-          fi &&
           docker stop front_dev || true &&
           docker rm front_dev || true &&
           docker run -d --name front_dev -p 3001:80 -v $DEPLOY_DIRECTORY_DEV:/usr/share/nginx/html nginx:alpine
           "
+
