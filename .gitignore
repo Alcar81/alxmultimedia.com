@@ -1,0 +1,16 @@
+# Ignorer tous les fichiers de log
+logs/*.access_log
+logs/*.error_log
+
+# Ignorer les fichiers de configuration locaux (à adapter si nécessaire)
+.env
+*.env.local
+
+# Ignorer les fichiers des sous-modules potentiellement problématiques
+backend/.git
+frontend/.git
+
+# Ignorer les fichiers compilés, caches et autres éléments temporaires
+node_modules/
+.DS_Store
+*.log
