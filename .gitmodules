@@ -1,7 +1,7 @@
 [submodule "backend"]
-  path = backend
-  url = https://github.com/Alcar81/alx_back.git
-  branch = dev
+	path = backend
+	url = https://github.com/Alcar81/alx_back.git
+	branch = dev
 
 [submodule "frontend"]
   path = frontend
